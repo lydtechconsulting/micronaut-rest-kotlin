@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("io.micronaut.application") version "4.3.2"
     id("io.micronaut.aot") version "4.3.2"
@@ -23,6 +21,7 @@ dependencies {
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut:micronaut-jackson-databind")
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
+    implementation("io.micronaut:micronaut-management")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.22")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
@@ -34,9 +33,14 @@ dependencies {
 
     runtimeOnly("org.yaml:snakeyaml")
 
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
+    testCompileOnly("org.projectlombok:lombok:1.18.30")
+    testImplementation(kotlin("test"))
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("io.mockk:mockk:1.13.8")
-    testImplementation(kotlin("test"))
+    testImplementation("dev.lydtech:component-test-framework:2.10.0")
+    testImplementation("io.rest-assured:rest-assured:5.4.0")
+    testImplementation("io.rest-assured:kotlin-extensions:5.4.0")
 }
 
 tasks.test {
@@ -47,6 +51,27 @@ application {
     mainClass.set("demo.DemoApplication")
 }
 
+graalvmNative {
+    toolchainDetection.set(false)
+    binaries {
+        named("main") {
+            imageName.set("demo-graalvm-application")
+            mainClass.set("demo.DemoApplication")
+            buildArgs.add("--verbose")
+        }
+    }
+}
+
+tasks {
+    dockerfileNative {
+        baseImage.set("ghcr.io/graalvm/native-image-community:21")
+        jdkVersion.set("21")
+    }
+    dockerBuildNative {
+        images.add("ct/micronaut-rest-kotlin")
+    }
+}
+
 kotlin {
     jvmToolchain(21)
 }
@@ -54,17 +79,24 @@ kotlin {
 micronaut {
     runtime("netty")
     testRuntime("junit5")
-    processing {
-        incremental.set(true)
-        annotations.set(setOf("demo.*"))
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
     }
-    aot {
-        optimizeServiceLoading = false
-        convertYamlToJava = false
-        precomputeOperations = true
-        cacheEnvironment = true
-        optimizeClassLoading = true
-        deduceEnvironment = true
-        optimizeNetty = true
+    include("**/*Test.*")
+}
+
+tasks.register<Test>("componentTest") {
+    useJUnitPlatform()
+    include("**/*CT.*")
+
+    testLogging {
+        events("passed", "skipped", "failed")
     }
+
+    systemProperties(System.getProperties().toMap() as Map<String,Object>)
+    environment("TESTCONTAINERS_REUSE_ENABLE", System.getProperty("containers.stayup"))
 }

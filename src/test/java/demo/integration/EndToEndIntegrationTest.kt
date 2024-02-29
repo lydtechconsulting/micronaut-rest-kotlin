@@ -23,10 +23,6 @@ import org.junit.jupiter.api.Test
 @MicronautTest
 class EndToEndIntegrationTest {
 
-//    @Inject
-//    @Client("/")
-//    var client: HttpClient? = null
-
     private lateinit var server: EmbeddedServer
     private lateinit var client: HttpClient
 
