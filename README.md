@@ -20,13 +20,13 @@ Build and test the Micronaut application, and then run:
 ./gradlew run
 ```
 
-Alternatively, following tests, build a native executable with GraalVM (version 21) - [install instructions](https://www.graalvm.org/latest/docs/getting-started/) - and then run:
+Alternatively, following tests, build a native executable with GraalVM (version 21) - [install instructions](https://www.graalvm.org/latest/docs/getting-started/) - and then run the executable:
 ```
 ./gradlew clean test
 ./gradlew nativeCompile
 ./gradlew nativeRun
 ```
-The standard `test` task is used as the unit tests using mocks, and these are not straightforward to use via the `nativeTest` task.  Mocks typically rely on runtime features such as reflection which are not fully supported with Kotlin/Native.
+The standard `test` task is used as the unit tests are using mocks via the `mockk` test lib, and these are not supported via the `nativeTestCompile` task.  Mocks typically rely on runtime features such as reflection which are not fully supported with Kotlin/Native.
 
 In a terminal window use curl to submit a POST REST request to the application to create an item:
 ```
