@@ -42,7 +42,7 @@ The component tests bring up the application in a docker container and hit this 
 
 For more on the component tests see: https://github.com/lydtechconsulting/component-test-framework
 
-Build the Micronaut application jar, followed by the Docker container:
+First ensure the Project module paths are set to `Inherit project compile output path` to ensure the fat jar is built in `./build/libs`.  Then build the Micronaut application jar, followed by the Docker container:
 ```
 ./gradlew clean build
 docker build -t ct/micronaut-rest-kotlin:latest .

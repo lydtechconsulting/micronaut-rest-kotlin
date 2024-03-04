@@ -1,6 +1,7 @@
 plugins {
     id("io.micronaut.application") version "4.3.2"
     id("io.micronaut.aot") version "4.3.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     kotlin("jvm") version "1.9.22"
     kotlin("kapt") version "1.9.22"
     kotlin("plugin.serialization") version "1.9.22"
@@ -50,6 +51,13 @@ tasks.test {
 application {
     mainClass.set("demo.DemoApplication")
 }
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "demo.DemoApplication"
+    }
+}
+
 
 graalvmNative {
     toolchainDetection.set(false)
