@@ -44,10 +44,6 @@ dependencies {
     testImplementation("io.rest-assured:kotlin-extensions:5.4.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 application {
     mainClass.set("demo.DemoApplication")
 }
@@ -57,7 +53,6 @@ tasks.jar {
         attributes["Main-Class"] = "demo.DemoApplication"
     }
 }
-
 
 graalvmNative {
     toolchainDetection.set(false)

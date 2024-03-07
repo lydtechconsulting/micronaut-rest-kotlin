@@ -14,7 +14,7 @@ https://github.com/lydtechconsulting/micronaut-rest-java
 
 The project requires Java 21 to build.
 
-Build and test the Micronaut application, and then run:
+Build and test the Micronaut application, and then run it, with the following commands:
 ```
 ./gradlew clean test
 ./gradlew run
